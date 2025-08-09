@@ -6,6 +6,7 @@ import Notepad from './Notepad';
 import PingPong from './PingPong';
 import Window from './Window';
 import Taskbar from './Taskbar';
+import Astroidz from './Astroidz';
 
 function App() {
   const [openWindows, setOpenWindows] = useState([
@@ -134,6 +135,24 @@ function App() {
               >
                 🏓 Network Ping Diagnostics
               </button>
+              <button
+                style={{
+                  padding: '8px 16px',
+                  fontSize: '11px',
+                  cursor: 'pointer',
+                  background: '#c0c0c0',
+                  color: '#000',
+                  border: '2px outset #c0c0c0',
+                  fontFamily: 'MS Sans Serif, sans-serif',
+                  width: '200px'
+                }}
+                onClick={() => openWindow('astroidz', 'Astroidz chunk killer')}
+                onMouseDown={(e) => e.target.style.border = '2px inset #c0c0c0'}
+                onMouseUp={(e) => e.target.style.border = '2px outset #c0c0c0'}
+                onMouseLeave={(e) => e.target.style.border = '2px outset #c0c0c0'}
+              >
+                🏓 Astroidz chunk killer
+              </button>
             </div>
           </div>
         );
@@ -145,6 +164,8 @@ function App() {
         return <Notepad />;
       case 'pingpong':
         return <PingPong />;
+      case 'astroidz':
+        return <Astroidz />;
       default:
         return null;
     }

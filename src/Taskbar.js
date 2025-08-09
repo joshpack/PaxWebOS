@@ -247,6 +247,18 @@ function Taskbar({ openWindows, setActiveWindow, openWindow }) {
               <hr style={{ border: 'none', height: '1px', background: '#808080', margin: '2px 0' }} />
               <div
                 style={hoveredItem === 'shutdown' ? {...startMenuItemStyle, ...startMenuItemHoverStyle} : startMenuItemStyle}
+                onMouseEnter={() => setHoveredItem('astroidz')}
+                onMouseLeave={() => setHoveredItem(null)}
+                onClick={() => {
+                  openWindow('astroidz', 'Astroidz chunk killer');
+                  setIsStartOpen(false);
+                }}
+              >
+                  🏓 Astroidz
+              </div>
+              <hr style={{ border: 'none', height: '1px', background: '#808080', margin: '2px 0' }} />
+              <div
+                style={hoveredItem === 'shutdown' ? {...startMenuItemStyle, ...startMenuItemHoverStyle} : startMenuItemStyle}
                 onMouseEnter={() => setHoveredItem('shutdown')}
                 onMouseLeave={() => setHoveredItem(null)}
                 onClick={handleShutdown}
