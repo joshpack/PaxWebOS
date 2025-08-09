@@ -244,9 +244,8 @@ function Taskbar({ openWindows, setActiveWindow, openWindow }) {
               >
                 🏓 Network Diagnostics
               </div>
-              <hr style={{ border: 'none', height: '1px', background: '#808080', margin: '2px 0' }} />
               <div
-                style={hoveredItem === 'shutdown' ? {...startMenuItemStyle, ...startMenuItemHoverStyle} : startMenuItemStyle}
+                style={hoveredItem === 'astroidz' ? {...startMenuItemStyle, ...startMenuItemHoverStyle} : startMenuItemStyle}
                 onMouseEnter={() => setHoveredItem('astroidz')}
                 onMouseLeave={() => setHoveredItem(null)}
                 onClick={() => {
