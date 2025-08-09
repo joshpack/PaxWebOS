@@ -12,24 +12,19 @@ It’s packed with tech-themed applications like:
 
 🐙 Git Blame – a productivity app for figuring out who broke the code (spoiler: it’s you).
 
+
+
 🚀 Features
 Fake Boot Sequence – Because a spinning loader makes everything more legit.
-
 Retro Pixel UI – It’s like Windows 98 had a baby with a modern design system.
-
 Multiple “Applications” – All running in your browser, no download required.
-
 Customizable Wallpapers – Switch from “Corporate Beige” to “RGB Gamer” mode instantly.
-
 Absolutely Zero Security – Just like the good old days.
 
 🛠 Tech Stack
 HTML/CSS – Because pixels don’t place themselves.
-
 JavaScript – Makes the windows draggable and your CPU a little warmer.
-
 LocalStorage – Saving your “files” that aren’t real, forever.
-
 A healthy dose of nostalgia – served fresh on page load.
 
 📦 Installation
