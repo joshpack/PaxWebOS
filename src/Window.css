@@ -1,0 +1,58 @@
+/* Container for the entire window */
+.window-container {
+    position: relative;
+    box-sizing: border-box;
+  }
+  
+  /* Ensure the resizable content fills the container */
+  .window-content {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+  }
+  
+  /* Ensure the resizable container fills the parent */
+  .resizable-window {
+    position: relative;
+    width: 100% !important;
+    height: 100% !important;
+    box-sizing: border-box;
+  }
+  
+  /* Style the resize handle (bottom-right corner) */
+  .react-resizable-handle.custom-handle {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    bottom: 0;
+    right: 0;
+    background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cGF0aCBkPSJNMTUgMTVMMTAgMTAgNiAxNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIvPgo8L3N2Zz4=') no-repeat center;
+    background-color: #c0c0c0;
+    border-top: 2px solid #fff;
+    border-left: 2px solid #fff;
+    cursor: se-resize;
+    z-index: 1001;
+    opacity: 1;
+  }
+  
+  /* Prevent text selection during drag */
+  .title-bar {
+    user-select: none;
+  }
+  
+  /* Ensure handle is clickable */
+  .react-resizable-handle.custom-handle::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1002;
+  }
+  
+  /* Style the resize outline */
+  .resize-outline {
+    box-sizing: border-box;
+    border-radius: 2px; /* Subtle rounding to match Windows aesthetic */
+  }
