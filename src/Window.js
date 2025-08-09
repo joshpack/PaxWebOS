@@ -6,61 +6,59 @@ import './Window.css';
 function Window({ id, title, children, openWindows, closeWindow, setActiveWindow }) {
   const windowRef = useRef(null);
   const [outline, setOutline] = useState({ width: 600, height: 400, visible: false });
-
   const window = openWindows.find((win) => win.id === id);
+  
   if (!window) return null;
 
   const windowStyle = {
     position: 'absolute',
-    border: '2px solid #000',
-    background: '#fff',
-    boxShadow: '2px 2px 10px rgba(0,0,0,0.3)',
+    border: '2px outset #c0c0c0',
+    background: '#c0c0c0',
+    boxShadow: '2px 2px 5px rgba(0,0,0,0.3)',
     zIndex: window.active ? 100 : 10,
     top: '50px',
     left: '50px',
+    fontFamily: 'MS Sans Serif, sans-serif',
+    fontSize: '11px'
   };
 
   const titleBarStyle = {
-    background: window.active ? 'linear-gradient(to right, #000080, #1084d0)' : '#808080',
+    background: window.active ? 
+      'linear-gradient(90deg, #000080 0%, #1084d0 100%)' : 
+      'linear-gradient(90deg, #808080 0%, #9090a0 100%)',
     color: '#fff',
-    padding: '5px',
+    padding: '2px 4px',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    fontFamily: 'Arial, sans-serif',
-    fontSize: '14px',
+    fontFamily: 'MS Sans Serif, sans-serif',
+    fontSize: '11px',
+    fontWeight: 'bold',
     cursor: 'move',
     userSelect: 'none',
+    height: '18px'
   };
 
   const buttonStyle = {
     background: '#c0c0c0',
-    border: '1px solid #000',
-    padding: '2px 10px',
+    border: '1px outset #c0c0c0',
+    width: '16px',
+    height: '14px',
     cursor: 'pointer',
-    fontSize: '12px',
-    marginLeft: '5px',
+    fontSize: '8px',
+    fontFamily: 'MS Sans Serif, sans-serif',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: '2px'
   };
 
   const contentStyle = {
-    padding: '10px',
+    background: '#c0c0c0',
     overflow: 'auto',
-    height: 'calc(100% - 30px)',
+    height: 'calc(100% - 22px)',
     boxSizing: 'border-box',
-    width: '100%',
-  };
-
-  const outlineStyle = {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: `${outline.width}px`,
-    height: `${outline.height}px`,
-    border: '2px dashed #0000ff',
-    background: 'rgba(0, 0, 255, 0.1)',
-    zIndex: 999, // Below handle but above content
-    pointerEvents: 'none',
-    display: outline.visible ? 'block' : 'none',
+    width: '100%'
   };
 
   return (
@@ -97,9 +95,31 @@ function Window({ id, title, children, openWindows, closeWindow, setActiveWindow
           <div className="window-content" style={{ width: '100%', height: '100%' }}>
             <div className="title-bar" style={titleBarStyle}>
               <span>{title}</span>
-              <div>
-                <button style={buttonStyle} onClick={() => closeWindow(id)}>
-                  X
+              <div style={{ display: 'flex' }}>
+                <button 
+                  style={buttonStyle} 
+                  onMouseDown={(e) => e.target.style.border = '1px inset #c0c0c0'}
+                  onMouseUp={(e) => e.target.style.border = '1px outset #c0c0c0'}
+                  onMouseLeave={(e) => e.target.style.border = '1px outset #c0c0c0'}
+                >
+                  _
+                </button>
+                <button 
+                  style={buttonStyle}
+                  onMouseDown={(e) => e.target.style.border = '1px inset #c0c0c0'}
+                  onMouseUp={(e) => e.target.style.border = '1px outset #c0c0c0'}
+                  onMouseLeave={(e) => e.target.style.border = '1px outset #c0c0c0'}
+                >
+                  □
+                </button>
+                <button 
+                  style={buttonStyle} 
+                  onClick={() => closeWindow(id)}
+                  onMouseDown={(e) => e.target.style.border = '1px inset #c0c0c0'}
+                  onMouseUp={(e) => e.target.style.border = '1px outset #c0c0c0'}
+                  onMouseLeave={(e) => e.target.style.border = '1px outset #c0c0c0'}
+                >
+                  ×
                 </button>
               </div>
             </div>
@@ -108,7 +128,6 @@ function Window({ id, title, children, openWindows, closeWindow, setActiveWindow
             </div>
           </div>
         </ResizableBox>
-        <div style={outlineStyle} className="resize-outline" />
       </div>
     </Draggable>
   );

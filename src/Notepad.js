@@ -8,12 +8,11 @@ import 'prismjs/components/prism-cpp';
 import 'prismjs/components/prism-csharp';
 import 'prismjs/components/prism-java';
 import 'prismjs/components/prism-jsx';
-import 'prismjs/themes/prism.css'; // Use Prism CSS for styling
 
 function Notepad() {
   const [content, setContent] = useState('');
   const [language, setLanguage] = useState('none');
-
+  
   const handleSave = () => {
     const blob = new Blob([content], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
@@ -33,23 +32,15 @@ function Notepad() {
     { value: 'jsx', label: 'React (JSX)' },
   ];
 
-  // Map language to Prism language for highlighting
   const getPrismLanguage = () => {
     switch (language) {
-      case 'none':
-        return null; // No highlighting for plain text
-      case 'python':
-        return languages.python;
-      case 'cpp':
-        return languages.cpp;
-      case 'csharp':
-        return languages.csharp;
-      case 'java':
-        return languages.java;
-      case 'jsx':
-        return languages.jsx;
-      default:
-        return null;
+      case 'none': return null;
+      case 'python': return languages.python;
+      case 'cpp': return languages.cpp;
+      case 'csharp': return languages.csharp;
+      case 'java': return languages.java;
+      case 'jsx': return languages.jsx;
+      default: return null;
     }
   };
 
@@ -57,50 +48,55 @@ function Notepad() {
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
-    fontFamily: 'Arial, sans-serif',
+    fontFamily: 'MS Sans Serif, sans-serif',
+    background: '#c0c0c0'
   };
 
   const headerStyle = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: '10px',
+    padding: '4px',
+    borderBottom: '1px solid #808080',
+    background: '#c0c0c0'
   };
 
   const selectStyle = {
-    padding: '5px',
-    fontSize: '14px',
-    borderRadius: '5px',
+    padding: '2px',
+    fontSize: '11px',
+    fontFamily: 'MS Sans Serif, sans-serif',
+    border: '2px inset #c0c0c0',
+    background: '#fff',
+    marginRight: '4px'
   };
 
   const buttonStyle = {
-    padding: '5px 10px',
+    padding: '4px 8px',
     cursor: 'pointer',
-    background: '#007bff',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '5px',
-    fontSize: '14px',
+    background: '#c0c0c0',
+    color: '#000',
+    border: '2px outset #c0c0c0',
+    fontSize: '11px',
+    fontFamily: 'MS Sans Serif, sans-serif'
   };
 
   const editorStyle = {
     flex: 1,
-    background: '#f4f4f4',
-    padding: '10px',
-    borderRadius: '5px',
-    border: '1px solid #ccc',
-    overflowY: 'auto',
-    fontFamily: 'Consolas, monospace',
-    fontSize: '14px',
-    minHeight: '150px',
-    maxHeight: 'calc(100% - 60px)', // Adjust for header and save button
+    background: '#fff',
+    margin: '4px',
+    border: '2px inset #c0c0c0',
+    fontFamily: 'Courier New, monospace',
+    fontSize: '12px',
+    minHeight: '200px'
   };
 
   return (
     <div style={containerStyle}>
       <div style={headerStyle}>
-        <h1 style={{ fontSize: '18px', margin: '10px 0' }}>Notepad</h1>
-        <div>
+        <h1 style={{ fontSize: '12px', margin: '0', color: '#000080', fontWeight: 'bold' }}>
+          Notepad++ Plus v2.0 (Not affiliated with Notepad++)
+        </h1>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
           <select
             style={selectStyle}
             value={language}
@@ -112,18 +108,32 @@ function Notepad() {
               </option>
             ))}
           </select>
-          <button style={buttonStyle} onClick={handleSave}>
-            Save
+          <button 
+            style={buttonStyle} 
+            onClick={handleSave}
+            onMouseDown={(e) => e.target.style.border = '2px inset #c0c0c0'}
+            onMouseUp={(e) => e.target.style.border = '2px outset #c0c0c0'}
+            onMouseLeave={(e) => e.target.style.border = '2px outset #c0c0c0'}
+          >
+            💾 Save
           </button>
         </div>
       </div>
+      
       <Editor
         value={content}
         onValueChange={(code) => setContent(code)}
         highlight={(code) => (getPrismLanguage() ? highlight(code, getPrismLanguage(), language) : code)}
-        padding={10}
+        padding={8}
         style={editorStyle}
         placeholder="Type or paste your text here..."
+        textareaProps={{
+          style: {
+            fontFamily: 'Courier New, monospace',
+            fontSize: '12px',
+            outline: 'none'
+          }
+        }}
       />
     </div>
   );
