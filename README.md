@@ -1,70 +1,73 @@
-# Getting Started with Create React App
+💻 PaxWebOS: The Browser-Based "Operating System" Your IT Department Warned You About
+Welcome to PaxWebOS — a web page so convincing, you might just try to Ctrl+Alt+Del your Chrome tab.
+This isn't an actual operating system... but your browser doesn't need to know that.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+It’s packed with tech-themed applications like:
 
-## Available Scripts
+📡 Ping Pong – a totally accurate network diagnostics tool (also a fun little game).
 
-In the project directory, you can run:
+📝 Notepad++ Plus – not affiliated with Notepad++, we just added another plus.
 
-### `npm start`
+🗄 Task Mangler – watch as fake processes drain your imaginary CPU.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+🐙 Git Blame – a productivity app for figuring out who broke the code (spoiler: it’s you).
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+🚀 Features
+Fake Boot Sequence – Because a spinning loader makes everything more legit.
 
-### `npm test`
+Retro Pixel UI – It’s like Windows 98 had a baby with a modern design system.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Multiple “Applications” – All running in your browser, no download required.
 
-### `npm run build`
+Customizable Wallpapers – Switch from “Corporate Beige” to “RGB Gamer” mode instantly.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Absolutely Zero Security – Just like the good old days.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+🛠 Tech Stack
+HTML/CSS – Because pixels don’t place themselves.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+JavaScript – Makes the windows draggable and your CPU a little warmer.
 
-### `npm run eject`
+LocalStorage – Saving your “files” that aren’t real, forever.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+A healthy dose of nostalgia – served fresh on page load.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+📦 Installation
+Clone this repo
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+bash
+Copy
+Edit
+git clone https://github.com/josh.pack/paxwebos.git
+cd webos
+Run it locally
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+bash
+Copy
+Edit
+npm install
+npm start
+Enjoy (fake) multitasking in your browser.
 
-## Learn More
+🖼 Screenshots
+Coming soon, right after we “borrow” some UI elements from 1998.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+💡 Roadmap
+ Add a fake “Blue Screen of Death” Easter egg.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+ Make the apps talk to each other in confusing ways.
 
-### Code Splitting
+ Implement “System Updates” that do nothing.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+ Launch an NFT marketplace inside the OS (because… why not?).
 
-### Analyzing the Bundle Size
+🐛 Contributing
+Found a bug? Great! File an issue so we can pretend to fix it.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+☕ Donate
+If you like this project, consider buying me a coffee so I can stay awake long enough to add “Dark Mode.”
 
-### Making a Progressive Web App
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+⚠ Disclaimer
+This project will not replace your operating system.
+If you try to install it on your BIOS, you’re on your own.
