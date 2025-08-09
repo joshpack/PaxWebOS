@@ -15,11 +15,11 @@ function PingPong() {
     }
   });
 
-  // Game objects
+  // Game objects - Reduced ball speed from 4,3 to 2.5,2
   const gameObjects = useRef({
-    paddle: { x: 30, y: 200, width: 10, height: 80, speed: 6 },
-    cpuPaddle: { x: 560, y: 200, width: 10, height: 80, speed: 4 },
-    ball: { x: 300, y: 250, dx: 4, dy: 3, radius: 6, trail: [] }
+    paddle: { x: 30, y: 200, width: 10, height: 80, speed: 4 },
+    cpuPaddle: { x: 560, y: 200, width: 10, height: 80, speed: 3 },
+    ball: { x: 300, y: 250, dx: 2.5, dy: 2, radius: 6, trail: [] }
   });
 
   const keys = useRef({});
@@ -58,8 +58,9 @@ function PingPong() {
     const { ball } = gameObjects.current;
     ball.x = 300;
     ball.y = 250;
-    ball.dx = (Math.random() > 0.5 ? 1 : -1) * 4;
-    ball.dy = (Math.random() - 0.5) * 6;
+    // Reduced initial speed from 4 to 2.5, and dy from 6 to 4
+    ball.dx = (Math.random() > 0.5 ? 1 : -1) * 2.5;
+    ball.dy = (Math.random() - 0.5) * 4;
     ball.trail = [];
   }, []);
 
@@ -71,10 +72,10 @@ function PingPong() {
     if (!canvas) return;
 
     // Update paddle position
-    if (keys.current['ArrowUp'] && paddle.y > 0) {
+    if ((keys.current['ArrowUp'] || keys.current['w'] || keys.current['W']) && paddle.y > 0) {
       paddle.y -= paddle.speed;
     }
-    if (keys.current['ArrowDown'] && paddle.y < canvas.height - paddle.height) {
+    if ((keys.current['ArrowDown'] || keys.current['s'] || keys.current['S']) && paddle.y < canvas.height - paddle.height) {
       paddle.y += paddle.speed;
     }
 
@@ -101,12 +102,12 @@ function PingPong() {
       ball.dy = -ball.dy;
     }
 
-    // Paddle collisions
+    // Paddle collisions - Reduced speed increase from 1.05 to 1.02
     if (ball.x <= paddle.x + paddle.width && 
         ball.y >= paddle.y && 
         ball.y <= paddle.y + paddle.height &&
         ball.dx < 0) {
-      ball.dx = -ball.dx * 1.05;
+      ball.dx = -ball.dx * 1.02;
       updateNetworkStats();
     }
 
@@ -114,7 +115,7 @@ function PingPong() {
         ball.y >= cpuPaddle.y && 
         ball.y <= cpuPaddle.y + cpuPaddle.height &&
         ball.dx > 0) {
-      ball.dx = -ball.dx * 1.05;
+      ball.dx = -ball.dx * 1.02;
       updateNetworkStats();
     }
 
@@ -355,7 +356,7 @@ Note: All network statistics are completely legitimate and not at all related to
 
       <div style={statusStyle}>
         <div>Network Status: PING {gameState.networkStats.ping}ms | Jitter {gameState.networkStats.jitter}ms | Packet Loss: {gameState.networkStats.packetsLost}</div>
-        <div>Score - Local: {gameState.playerScore} | Remote: {gameState.cpuScore} | Use ↑↓ arrows to adjust connection quality</div>
+        <div>Score - Local: {gameState.playerScore} | Remote: {gameState.cpuScore} | Use ↑↓ arrows or W/S keys to adjust connection quality</div>
       </div>
     </div>
   );

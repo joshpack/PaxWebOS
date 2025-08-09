@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 function Taskbar({ openWindows, setActiveWindow, openWindow }) {
   const [isStartOpen, setIsStartOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [showShutdownConfirm, setShowShutdownConfirm] = useState(false);
 
   const toggleStartMenu = () => setIsStartOpen(!isStartOpen);
 
@@ -26,6 +27,19 @@ function Taskbar({ openWindows, setActiveWindow, openWindow }) {
       day: 'numeric' 
     });
     return `${time}\n${dateStr}`;
+  };
+
+  const handleShutdown = () => {
+    setShowShutdownConfirm(true);
+    setIsStartOpen(false);
+  };
+
+  const confirmShutdown = () => {
+    window.location.reload();
+  };
+
+  const cancelShutdown = () => {
+    setShowShutdownConfirm(false);
   };
 
   const taskbarStyle = {
@@ -124,112 +138,173 @@ function Taskbar({ openWindows, setActiveWindow, openWindow }) {
     justifyContent: 'center'
   };
 
+  const modalOverlayStyle = {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'rgba(0, 0, 0, 0.5)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 2000
+  };
+
+  const modalStyle = {
+    background: '#c0c0c0',
+    border: '2px outset #c0c0c0',
+    padding: '16px',
+    fontFamily: 'MS Sans Serif, sans-serif',
+    fontSize: '11px',
+    minWidth: '300px',
+    textAlign: 'center'
+  };
+
+  const modalButtonStyle = {
+    background: '#c0c0c0',
+    border: '2px outset #c0c0c0',
+    padding: '4px 16px',
+    margin: '8px 4px 0 4px',
+    cursor: 'pointer',
+    fontFamily: 'MS Sans Serif, sans-serif',
+    fontSize: '11px'
+  };
+
   const [hoveredItem, setHoveredItem] = useState(null);
 
   return (
-    <div style={taskbarStyle}>
-      <div style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
-        <div 
-          style={startButtonStyle} 
-          onClick={toggleStartMenu}
-          onMouseDown={(e) => e.target.style.border = '2px inset #c0c0c0'}
-          onMouseUp={(e) => e.target.style.border = '2px outset #c0c0c0'}
-          onMouseLeave={(e) => e.target.style.border = '2px outset #c0c0c0'}
-        >
-          <span>🪟 Start</span>
+    <>
+      <div style={taskbarStyle}>
+        <div style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+          <div 
+            style={startButtonStyle} 
+            onClick={toggleStartMenu}
+            onMouseDown={(e) => e.target.style.border = '2px inset #c0c0c0'}
+            onMouseUp={(e) => e.target.style.border = '2px outset #c0c0c0'}
+            onMouseLeave={(e) => e.target.style.border = '2px outset #c0c0c0'}
+          >
+            <span>🪟 Start</span>
+          </div>
+          
+          {isStartOpen && (
+            <div style={startMenuStyle}>
+              <div
+                style={hoveredItem === 'home' ? {...startMenuItemStyle, ...startMenuItemHoverStyle} : startMenuItemStyle}
+                onMouseEnter={() => setHoveredItem('home')}
+                onMouseLeave={() => setHoveredItem(null)}
+                onClick={() => {
+                  openWindow('home', 'Home');
+                  setIsStartOpen(false);
+                }}
+              >
+                🏠 Home
+              </div>
+              <div
+                style={hoveredItem === 'sfc' ? {...startMenuItemStyle, ...startMenuItemHoverStyle} : startMenuItemStyle}
+                onMouseEnter={() => setHoveredItem('sfc')}
+                onMouseLeave={() => setHoveredItem(null)}
+                onClick={() => {
+                  openWindow('sfc', 'SFC Analyzer');
+                  setIsStartOpen(false);
+                }}
+              >
+                📡 SFC Analyzer
+              </div>
+              <div
+                style={hoveredItem === 'memory' ? {...startMenuItemStyle, ...startMenuItemHoverStyle} : startMenuItemStyle}
+                onMouseEnter={() => setHoveredItem('memory')}
+                onMouseLeave={() => setHoveredItem(null)}
+                onClick={() => {
+                  openWindow('memory-dump', 'Memory Dump Analyzer');
+                  setIsStartOpen(false);
+                }}
+              >
+                🗄 Memory Dump.dmp
+              </div>
+              <div
+                style={hoveredItem === 'notepad' ? {...startMenuItemStyle, ...startMenuItemHoverStyle} : startMenuItemStyle}
+                onMouseEnter={() => setHoveredItem('notepad')}
+                onMouseLeave={() => setHoveredItem(null)}
+                onClick={() => {
+                  openWindow('notepad', 'Notepad++ Plus');
+                  setIsStartOpen(false);
+                }}
+              >
+                📝 Notepad++ Plus
+              </div>
+              <div
+                style={hoveredItem === 'ping' ? {...startMenuItemStyle, ...startMenuItemHoverStyle} : startMenuItemStyle}
+                onMouseEnter={() => setHoveredItem('ping')}
+                onMouseLeave={() => setHoveredItem(null)}
+                onClick={() => {
+                  openWindow('pingpong', 'Ping Pong Diagnostics');
+                  setIsStartOpen(false);
+                }}
+              >
+                🏓 Network Diagnostics
+              </div>
+              <hr style={{ border: 'none', height: '1px', background: '#808080', margin: '2px 0' }} />
+              <div
+                style={hoveredItem === 'shutdown' ? {...startMenuItemStyle, ...startMenuItemHoverStyle} : startMenuItemStyle}
+                onMouseEnter={() => setHoveredItem('shutdown')}
+                onMouseLeave={() => setHoveredItem(null)}
+                onClick={handleShutdown}
+              >
+                ⚡ Shut Down...
+              </div>
+            </div>
+          )}
+          
+          <div style={{ display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
+            {openWindows.map((win) => (
+              <div
+                key={win.id}
+                style={taskItemStyle(win.active)}
+                onClick={() => setActiveWindow(win.id)}
+                title={win.title}
+              >
+                {win.title}
+              </div>
+            ))}
+          </div>
         </div>
         
-        {isStartOpen && (
-          <div style={startMenuStyle}>
-            <div
-              style={hoveredItem === 'home' ? {...startMenuItemStyle, ...startMenuItemHoverStyle} : startMenuItemStyle}
-              onMouseEnter={() => setHoveredItem('home')}
-              onMouseLeave={() => setHoveredItem(null)}
-              onClick={() => {
-                openWindow('home', 'Home');
-                setIsStartOpen(false);
-              }}
-            >
-              🏠 Home
+        <div style={clockStyle}>
+          {formatDateTime(currentTime)}
+        </div>
+      </div>
+
+      {showShutdownConfirm && (
+        <div style={modalOverlayStyle} onClick={cancelShutdown}>
+          <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
+            <div style={{ marginBottom: '16px' }}>
+              Are you sure you want to shut down PaxWebOS?
             </div>
-            <div
-              style={hoveredItem === 'sfc' ? {...startMenuItemStyle, ...startMenuItemHoverStyle} : startMenuItemStyle}
-              onMouseEnter={() => setHoveredItem('sfc')}
-              onMouseLeave={() => setHoveredItem(null)}
-              onClick={() => {
-                openWindow('sfc', 'SFC Analyzer');
-                setIsStartOpen(false);
-              }}
-            >
-              📡 SFC Analyzer
-            </div>
-            <div
-              style={hoveredItem === 'memory' ? {...startMenuItemStyle, ...startMenuItemHoverStyle} : startMenuItemStyle}
-              onMouseEnter={() => setHoveredItem('memory')}
-              onMouseLeave={() => setHoveredItem(null)}
-              onClick={() => {
-                openWindow('memory-dump', 'Memory Dump Analyzer');
-                setIsStartOpen(false);
-              }}
-            >
-              🗄 Memory Dump.dmp
-            </div>
-            <div
-              style={hoveredItem === 'notepad' ? {...startMenuItemStyle, ...startMenuItemHoverStyle} : startMenuItemStyle}
-              onMouseEnter={() => setHoveredItem('notepad')}
-              onMouseLeave={() => setHoveredItem(null)}
-              onClick={() => {
-                openWindow('notepad', 'Notepad++ Plus');
-                setIsStartOpen(false);
-              }}
-            >
-              📝 Notepad++ Plus
-            </div>
-            <div
-              style={hoveredItem === 'ping' ? {...startMenuItemStyle, ...startMenuItemHoverStyle} : startMenuItemStyle}
-              onMouseEnter={() => setHoveredItem('ping')}
-              onMouseLeave={() => setHoveredItem(null)}
-              onClick={() => {
-                openWindow('pingpong', 'Ping Pong Diagnostics');
-                setIsStartOpen(false);
-              }}
-            >
-              🏓 Network Diagnostics
-            </div>
-            <hr style={{ border: 'none', height: '1px', background: '#808080', margin: '2px 0' }} />
-            <div
-              style={hoveredItem === 'shutdown' ? {...startMenuItemStyle, ...startMenuItemHoverStyle} : startMenuItemStyle}
-              onMouseEnter={() => setHoveredItem('shutdown')}
-              onMouseLeave={() => setHoveredItem(null)}
-              onClick={() => {
-                if (confirm('Are you sure you want to shut down PaxWebOS?')) {
-                  window.location.reload();
-                }
-              }}
-            >
-              ⚡ Shut Down...
+            <div>
+              <button
+                style={modalButtonStyle}
+                onClick={confirmShutdown}
+                onMouseDown={(e) => e.target.style.border = '2px inset #c0c0c0'}
+                onMouseUp={(e) => e.target.style.border = '2px outset #c0c0c0'}
+                onMouseLeave={(e) => e.target.style.border = '2px outset #c0c0c0'}
+              >
+                Yes
+              </button>
+              <button
+                style={modalButtonStyle}
+                onClick={cancelShutdown}
+                onMouseDown={(e) => e.target.style.border = '2px inset #c0c0c0'}
+                onMouseUp={(e) => e.target.style.border = '2px outset #c0c0c0'}
+                onMouseLeave={(e) => e.target.style.border = '2px outset #c0c0c0'}
+              >
+                Cancel
+              </button>
             </div>
           </div>
-        )}
-        
-        <div style={{ display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
-          {openWindows.map((win) => (
-            <div
-              key={win.id}
-              style={taskItemStyle(win.active)}
-              onClick={() => setActiveWindow(win.id)}
-              title={win.title}
-            >
-              {win.title}
-            </div>
-          ))}
         </div>
-      </div>
-      
-      <div style={clockStyle}>
-        {formatDateTime(currentTime)}
-      </div>
-    </div>
+      )}
+    </>
   );
 }
 
