@@ -1,5 +1,9 @@
 {
   "name": "joshpack.com",
+  
+  "engines": {
+    "node": "22.18.0"
+  },
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -39,9 +43,6 @@
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
-    ],
-    "engines": {
-    "node": "22.18.0"
-  }
+    ]
   }
 }
