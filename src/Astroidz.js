@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 
-function AsteroidsGame() {
+function Astroidz() {
   const canvasRef = useRef(null);
   const animationRef = useRef(null);
-  
-  // High scores "database" - simulated server persistence
+  const lastFrameTime = useRef(0);
+  const FRAME_RATE = 60; // Target 60 FPS
+  const FRAME_TIME = 1000 / FRAME_RATE; // ~16.67ms per frame
+
+  // High scores "database"
   const [highScores, setHighScores] = useState([
     { name: "ADMIN", score: 15420, timestamp: "2024-12-15 09:23:41" },
     { name: "SYS_USER", score: 12800, timestamp: "2024-12-14 16:45:22" },
@@ -33,24 +36,47 @@ function AsteroidsGame() {
   });
 
   const keys = useRef({});
+  const mouse = useRef({ isFiring: false, x: 0, y: 0 });
 
-  // Key event handlers
+  // Key and mouse event handlers
   useEffect(() => {
     const handleKeyDown = (e) => {
       keys.current[e.key.toLowerCase()] = true;
       if (e.key === ' ') e.preventDefault();
     };
-    
+
     const handleKeyUp = (e) => {
       keys.current[e.key.toLowerCase()] = false;
     };
 
+    const handleMouseDown = () => {
+      mouse.current.isFiring = true;
+    };
+
+    const handleMouseUp = () => {
+      mouse.current.isFiring = false;
+    };
+
+    const handleMouseMove = (e) => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      mouse.current.x = e.clientX - rect.left;
+      mouse.current.y = e.clientY - rect.top;
+    };
+
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
+    canvasRef.current?.addEventListener('mousedown', handleMouseDown);
+    canvasRef.current?.addEventListener('mouseup', handleMouseUp);
+    canvasRef.current?.addEventListener('mousemove', handleMouseMove);
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
+      canvasRef.current?.removeEventListener('mousedown', handleMouseDown);
+      canvasRef.current?.removeEventListener('mouseup', handleMouseUp);
+      canvasRef.current?.removeEventListener('mousemove', handleMouseMove);
     };
   }, []);
 
@@ -59,10 +85,10 @@ function AsteroidsGame() {
       x: x || Math.random() * 600,
       y: y || Math.random() * 400,
       size: size || 3,
-      dx: dx || (Math.random() - 0.5) * 2,
-      dy: dy || (Math.random() - 0.5) * 2,
+      dx: dx || (Math.random() - 0.5) * 1,
+      dy: dy || (Math.random() - 0.5) * 1,
       angle: Math.random() * Math.PI * 2,
-      rotation: (Math.random() - 0.5) * 0.1,
+      rotation: (Math.random() - 0.5) * 0.03,
       vertices: Array.from({length: 8}, () => Math.random() * 0.4 + 0.8)
     };
   }, []);
@@ -70,8 +96,8 @@ function AsteroidsGame() {
   const createParticle = useCallback((x, y, color = '#00ff00') => {
     return {
       x, y,
-      dx: (Math.random() - 0.5) * 4,
-      dy: (Math.random() - 0.5) * 4,
+      dx: (Math.random() - 0.5) * 2,
+      dy: (Math.random() - 0.5) * 2,
       life: 30,
       maxLife: 30,
       color
@@ -81,63 +107,70 @@ function AsteroidsGame() {
   const initializeLevel = useCallback(() => {
     const { asteroids } = gameObjects.current;
     asteroids.length = 0;
-    
-    const asteroidCount = 4 + gameState.level;
+
+    const asteroidCount = 3 + Math.floor(gameState.level / 2);
     for (let i = 0; i < asteroidCount; i++) {
       let x, y;
       do {
         x = Math.random() * 600;
         y = Math.random() * 400;
       } while (Math.sqrt((x - 300) ** 2 + (y - 200) ** 2) < 100);
-      
+
       asteroids.push(createAsteroid(x, y, 3));
     }
   }, [gameState.level, createAsteroid]);
 
-  const updateGame = useCallback(() => {
+  const updateGame = useCallback((deltaTime) => {
     if (!gameState.isPlaying || gameState.isPaused || gameState.gameOver) return;
 
     const { ship, bullets, asteroids, particles } = gameObjects.current;
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    // Ship controls
+    const delta = deltaTime / FRAME_TIME;
+
+    // Ship aiming at mouse
+    const dx = mouse.current.x - ship.x;
+    const dy = mouse.current.y - ship.y;
+    ship.angle = Math.atan2(dy, dx);
+
+    // Ship controls (rotation via A/D or arrows is optional, mouse takes priority)
     if (keys.current['a'] || keys.current['arrowleft']) {
-      ship.angle -= 0.15;
+      ship.angle -= 0.15 * delta;
     }
     if (keys.current['d'] || keys.current['arrowright']) {
-      ship.angle += 0.15;
+      ship.angle += 0.15 * delta;
     }
-    
+
     ship.thrust = keys.current['w'] || keys.current['arrowup'];
-    
+
     if (ship.thrust) {
-      const thrustPower = 0.3;
-      ship.dx += Math.cos(ship.angle) * thrustPower;
-      ship.dy += Math.sin(ship.angle) * thrustPower;
+      const thrustPower = 0.2;
+      ship.dx += Math.cos(ship.angle) * thrustPower * delta;
+      ship.dy += Math.sin(ship.angle) * thrustPower * delta;
     }
 
     // Apply friction
-    ship.dx *= 0.98;
-    ship.dy *= 0.98;
+    ship.dx *= 0.99;
+    ship.dy *= 0.99;
 
     // Update ship position
-    ship.x += ship.dx;
-    ship.y += ship.dy;
+    ship.x += ship.dx * delta;
+    ship.y += ship.dy * delta;
 
     // Wrap ship around screen
     ship.x = (ship.x + canvas.width) % canvas.width;
     ship.y = (ship.y + canvas.height) % canvas.height;
 
-    // Shooting
-    if (keys.current[' '] || keys.current['spacebar']) {
+    // Shooting (spacebar or mouse click)
+    if (keys.current[' '] || keys.current['spacebar'] || mouse.current.isFiring) {
       const now = Date.now();
-      if (!ship.lastShot || now - ship.lastShot > 150) {
+      if (!ship.lastShot || now - ship.lastShot > 200) {
         bullets.push({
           x: ship.x + Math.cos(ship.angle) * ship.size,
           y: ship.y + Math.sin(ship.angle) * ship.size,
-          dx: Math.cos(ship.angle) * 8 + ship.dx,
-          dy: Math.sin(ship.angle) * 8 + ship.dy,
+          dx: Math.cos(ship.angle) * 6 + ship.dx,
+          dy: Math.sin(ship.angle) * 6 + ship.dy,
           life: 60
         });
         ship.lastShot = now;
@@ -146,12 +179,12 @@ function AsteroidsGame() {
 
     // Update bullets
     bullets.forEach((bullet, index) => {
-      bullet.x += bullet.dx;
-      bullet.y += bullet.dy;
+      bullet.x += bullet.dx * delta;
+      bullet.y += bullet.dy * delta;
       bullet.x = (bullet.x + canvas.width) % canvas.width;
       bullet.y = (bullet.y + canvas.height) % canvas.height;
-      bullet.life--;
-      
+      bullet.life -= delta;
+
       if (bullet.life <= 0) {
         bullets.splice(index, 1);
       }
@@ -159,18 +192,18 @@ function AsteroidsGame() {
 
     // Update asteroids
     asteroids.forEach(asteroid => {
-      asteroid.x += asteroid.dx;
-      asteroid.y += asteroid.dy;
+      asteroid.x += asteroid.dx * delta;
+      asteroid.y += asteroid.dy * delta;
       asteroid.x = (asteroid.x + canvas.width) % canvas.width;
       asteroid.y = (asteroid.y + canvas.height) % canvas.height;
-      asteroid.angle += asteroid.rotation;
+      asteroid.angle += asteroid.rotation * delta;
     });
 
     // Update particles
     particles.forEach((particle, index) => {
-      particle.x += particle.dx;
-      particle.y += particle.dy;
-      particle.life--;
+      particle.x += particle.dx * delta;
+      particle.y += particle.dy * delta;
+      particle.life -= delta;
       if (particle.life <= 0) {
         particles.splice(index, 1);
       }
@@ -182,30 +215,27 @@ function AsteroidsGame() {
         const dx = bullet.x - asteroid.x;
         const dy = bullet.y - asteroid.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
-        
+
         if (distance < asteroid.size * 8) {
-          // Create explosion particles
           for (let i = 0; i < 8; i++) {
             particles.push(createParticle(asteroid.x, asteroid.y, '#ffff00'));
           }
-          
-          // Score points
+
           const points = (4 - asteroid.size) * 50;
           setGameState(prev => ({ ...prev, score: prev.score + points }));
-          
-          // Split asteroid if large enough
+
           if (asteroid.size > 1) {
             for (let i = 0; i < 2; i++) {
               asteroids.push(createAsteroid(
-                asteroid.x, 
-                asteroid.y, 
+                asteroid.x,
+                asteroid.y,
                 asteroid.size - 1,
-                asteroid.dx + (Math.random() - 0.5) * 2,
-                asteroid.dy + (Math.random() - 0.5) * 2
+                asteroid.dx + (Math.random() - 0.5) * 1,
+                asteroid.dy + (Math.random() - 0.5) * 1
               ));
             }
           }
-          
+
           bullets.splice(bulletIndex, 1);
           asteroids.splice(asteroidIndex, 1);
         }
@@ -217,13 +247,12 @@ function AsteroidsGame() {
       const dx = ship.x - asteroid.x;
       const dy = ship.y - asteroid.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
-      
+
       if (distance < ship.size + asteroid.size * 6) {
-        // Create explosion
         for (let i = 0; i < 15; i++) {
           particles.push(createParticle(ship.x, ship.y, '#ff0000'));
         }
-        
+
         setGameState(prev => {
           const newLives = prev.lives - 1;
           return {
@@ -232,8 +261,7 @@ function AsteroidsGame() {
             gameOver: newLives <= 0
           };
         });
-        
-        // Reset ship position
+
         ship.x = 300;
         ship.y = 200;
         ship.dx = 0;
@@ -254,15 +282,13 @@ function AsteroidsGame() {
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    
+
     const ctx = canvas.getContext('2d');
     const { ship, bullets, asteroids, particles } = gameObjects.current;
 
-    // Clear canvas with space background
     ctx.fillStyle = '#000033';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Draw star field
     for (let i = 0; i < 100; i++) {
       const x = (i * 37) % canvas.width;
       const y = (i * 73) % canvas.height;
@@ -273,7 +299,6 @@ function AsteroidsGame() {
     ctx.strokeStyle = '#00ff00';
     ctx.lineWidth = 1;
 
-    // Draw ship
     if (!gameState.gameOver) {
       ctx.save();
       ctx.translate(ship.x, ship.y);
@@ -285,8 +310,7 @@ function AsteroidsGame() {
       ctx.lineTo(-ship.size, ship.size / 2);
       ctx.closePath();
       ctx.stroke();
-      
-      // Draw thrust
+
       if (ship.thrust) {
         ctx.strokeStyle = '#ff6600';
         ctx.beginPath();
@@ -299,26 +323,24 @@ function AsteroidsGame() {
       ctx.restore();
     }
 
-    // Draw bullets
     ctx.fillStyle = '#ffff00';
     bullets.forEach(bullet => {
       ctx.fillRect(bullet.x - 1, bullet.y - 1, 2, 2);
     });
 
-    // Draw asteroids
     ctx.strokeStyle = '#00ff00';
     asteroids.forEach(asteroid => {
       ctx.save();
       ctx.translate(asteroid.x, asteroid.y);
       ctx.rotate(asteroid.angle);
       ctx.beginPath();
-      
+
       for (let i = 0; i < asteroid.vertices.length; i++) {
         const angle = (i / asteroid.vertices.length) * Math.PI * 2;
         const radius = asteroid.size * 8 * asteroid.vertices[i];
         const x = Math.cos(angle) * radius;
         const y = Math.sin(angle) * radius;
-        
+
         if (i === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
       }
@@ -327,14 +349,12 @@ function AsteroidsGame() {
       ctx.restore();
     });
 
-    // Draw particles
     particles.forEach(particle => {
       const alpha = particle.life / particle.maxLife;
       ctx.fillStyle = particle.color + Math.floor(alpha * 255).toString(16).padStart(2, '0');
       ctx.fillRect(particle.x - 1, particle.y - 1, 2, 2);
     });
 
-    // Draw HUD
     ctx.fillStyle = '#00ff00';
     ctx.font = '12px MS Sans Serif';
     ctx.fillText(`Score: ${gameState.score}`, 10, 25);
@@ -345,7 +365,7 @@ function AsteroidsGame() {
     if (gameState.gameOver) {
       ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      
+
       ctx.fillStyle = '#ff0000';
       ctx.font = '24px MS Sans Serif';
       ctx.textAlign = 'center';
@@ -359,24 +379,30 @@ function AsteroidsGame() {
   }, [gameState]);
 
   const gameLoop = useCallback(() => {
-    updateGame();
-    draw();
+    const now = performance.now();
+    const deltaTime = now - lastFrameTime.current;
+
+    if (deltaTime >= FRAME_TIME) {
+      updateGame(deltaTime);
+      draw();
+      lastFrameTime.current = now - (deltaTime % FRAME_TIME);
+    }
+
     animationRef.current = requestAnimationFrame(gameLoop);
   }, [updateGame, draw]);
 
   const startGame = () => {
-    setGameState(prev => ({ 
-      ...prev, 
-      isPlaying: true, 
-      isPaused: false, 
+    setGameState(prev => ({
+      ...prev,
+      isPlaying: true,
+      isPaused: false,
       gameOver: false,
       score: 0,
       lives: 3,
       level: 1,
       serverStatus: 'ONLINE'
     }));
-    
-    // Reset game objects
+
     const { ship, bullets, asteroids, particles } = gameObjects.current;
     ship.x = 300;
     ship.y = 200;
@@ -386,8 +412,9 @@ function AsteroidsGame() {
     bullets.length = 0;
     asteroids.length = 0;
     particles.length = 0;
-    
+
     setTimeout(initializeLevel, 100);
+    lastFrameTime.current = performance.now();
   };
 
   const pauseGame = () => {
@@ -428,16 +455,15 @@ function AsteroidsGame() {
     setGameState(prev => ({ ...prev, playerName: '', showHighScores: true }));
   };
 
-  // Handle restart key
   useEffect(() => {
     if (gameState.gameOver && keys.current['r']) {
       startGame();
     }
   }, [gameState.gameOver]);
 
-  // Start game loop
   useEffect(() => {
     if (gameState.isPlaying && !gameState.isPaused) {
+      lastFrameTime.current = performance.now();
       gameLoop();
     } else {
       if (animationRef.current) {
@@ -452,7 +478,6 @@ function AsteroidsGame() {
     };
   }, [gameState.isPlaying, gameState.isPaused, gameLoop]);
 
-  // Initial draw
   useEffect(() => {
     draw();
   }, [draw]);
@@ -478,21 +503,21 @@ function AsteroidsGame() {
   };
 
   return (
-    <div style={{ 
-      height: '100%', 
-      display: 'flex', 
-      flexDirection: 'column', 
+    <div style={{
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
       fontFamily: 'MS Sans Serif, sans-serif',
       background: '#c0c0c0'
     }}>
       <div style={{ padding: '4px', borderBottom: '1px solid #808080' }}>
         <h1 style={{ fontSize: '12px', margin: '4px 0', color: '#000080', fontWeight: 'bold' }}>
-          🚀 Asteroids Network Defense System v2.1
+          🚀 Astroidz Network Defense System v2.1
         </h1>
-        
+
         <div style={{ marginBottom: '4px' }}>
-          <button 
-            style={buttonStyle} 
+          <button
+            style={buttonStyle}
             onClick={startGame}
             onMouseDown={(e) => e.target.style.border = '2px inset #c0c0c0'}
             onMouseUp={(e) => e.target.style.border = '2px outset #c0c0c0'}
@@ -500,8 +525,8 @@ function AsteroidsGame() {
           >
             Initialize Defense
           </button>
-          <button 
-            style={buttonStyle} 
+          <button
+            style={buttonStyle}
             onClick={pauseGame}
             disabled={!gameState.isPlaying}
             onMouseDown={(e) => e.target.style.border = '2px inset #c0c0c0'}
@@ -510,8 +535,8 @@ function AsteroidsGame() {
           >
             {gameState.isPaused ? 'Resume' : 'Pause'}
           </button>
-          <button 
-            style={buttonStyle} 
+          <button
+            style={buttonStyle}
             onClick={resetGame}
             onMouseDown={(e) => e.target.style.border = '2px inset #c0c0c0'}
             onMouseUp={(e) => e.target.style.border = '2px outset #c0c0c0'}
@@ -519,8 +544,8 @@ function AsteroidsGame() {
           >
             Reset
           </button>
-          <button 
-            style={buttonStyle} 
+          <button
+            style={buttonStyle}
             onClick={() => setGameState(prev => ({ ...prev, showHighScores: !prev.showHighScores }))}
             onMouseDown={(e) => e.target.style.border = '2px inset #c0c0c0'}
             onMouseUp={(e) => e.target.style.border = '2px outset #c0c0c0'}
@@ -554,9 +579,9 @@ function AsteroidsGame() {
         )}
       </div>
 
-      <div style={{ 
-        flex: 1, 
-        border: '2px inset #c0c0c0', 
+      <div style={{
+        flex: 1,
+        border: '2px inset #c0c0c0',
         background: '#000033',
         display: 'flex',
         justifyContent: 'center',
@@ -568,7 +593,7 @@ function AsteroidsGame() {
           ref={canvasRef}
           width={600}
           height={400}
-          style={{ 
+          style={{
             border: '1px solid #000',
             background: '#000033'
           }}
@@ -594,7 +619,7 @@ function AsteroidsGame() {
               Last sync: {new Date().toLocaleTimeString()}
             </div>
             {highScores.map((score, index) => (
-              <div key={index} style={{ 
+              <div key={index} style={{
                 marginBottom: '2px',
                 display: 'flex',
                 justifyContent: 'space-between'
@@ -623,10 +648,10 @@ function AsteroidsGame() {
         fontFamily: 'MS Sans Serif, sans-serif'
       }}>
         <div>Defense Status: {gameState.isPlaying ? 'ACTIVE' : 'STANDBY'} | Threat Level: {gameState.level} | Score: {gameState.score.toLocaleString()}</div>
-        <div>Controls: WASD/Arrows to move, SPACEBAR to fire | Server connection: {gameState.serverStatus}</div>
+        <div>Controls: W/Up for thrust, A/D or Left/Right for rotation, MOUSE to aim, SPACEBAR or MOUSE CLICK to fire | Server connection: {gameState.serverStatus}</div>
       </div>
     </div>
   );
 }
 
-export default AsteroidsGame;
+export default Astroidz;

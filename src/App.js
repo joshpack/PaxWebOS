@@ -146,12 +146,12 @@ function App() {
                   fontFamily: 'MS Sans Serif, sans-serif',
                   width: '200px'
                 }}
-                onClick={() => openWindow('astroidz', 'Astroidz chunk killer')}
+                onClick={() => openWindow('astroidz', 'Astroidz Network Defense System v2.1')}
                 onMouseDown={(e) => e.target.style.border = '2px inset #c0c0c0'}
                 onMouseUp={(e) => e.target.style.border = '2px outset #c0c0c0'}
                 onMouseLeave={(e) => e.target.style.border = '2px outset #c0c0c0'}
               >
-                🏓 Astroidz chunk killer
+                🚀 Astroidz Network Defense System v2.1
               </button>
             </div>
           </div>

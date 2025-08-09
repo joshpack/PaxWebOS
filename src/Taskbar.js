@@ -250,11 +250,11 @@ function Taskbar({ openWindows, setActiveWindow, openWindow }) {
                 onMouseEnter={() => setHoveredItem('astroidz')}
                 onMouseLeave={() => setHoveredItem(null)}
                 onClick={() => {
-                  openWindow('astroidz', 'Astroidz chunk killer');
+                  openWindow('astroidz', 'Astroidz Network Defense System v2.1');
                   setIsStartOpen(false);
                 }}
               >
-                  🏓 Astroidz
+                  🚀 Astroidz Network Defense System v2.1
               </div>
               <hr style={{ border: 'none', height: '1px', background: '#808080', margin: '2px 0' }} />
               <div
