@@ -8,6 +8,7 @@ import Astroidz from './Astroidz';
 import SpeedTest from './SpeedTest';
 import Window from './Window';
 import Taskbar from './Taskbar';
+import MapApp from './MapApp';
 
 function App() {
   const [openWindows, setOpenWindows] = useState([
@@ -204,6 +205,24 @@ function App() {
               >
                 🌐 Internet Speed Test
               </button>
+              <button
+                style={{
+                  padding: '6px 12px',
+                  fontSize: '11px',
+                  cursor: 'pointer',
+                  background: '#c0c0c0',
+                  color: '#000',
+                  border: '2px outset #c0c0c0',
+                  fontFamily: 'MS Sans Serif, sans-serif',
+                  width: '180px',
+                }}
+                onClick={() => openWindow('map', 'Map')}
+                onMouseDown={(e) => e.target.style.border = '2px inset #c0c0c0'}
+                onMouseUp={(e) => e.target.style.border = '2px outset #c0c0c0'}
+                onMouseLeave={(e) => e.target.style.border = '2px outset #c0c0c0'}
+              >
+                🌍 Map
+              </button>
             </div>
           </div>
         );
@@ -219,6 +238,8 @@ function App() {
         return <Astroidz />;
       case 'speedtest':
         return <SpeedTest />;
+      case 'map':
+        return <MapApp />;
       default:
         return null;
     }
@@ -264,6 +285,7 @@ function App() {
             <Route path="/pingpong" element={null} />
             <Route path="/astroidz" element={null} />
             <Route path="/speedtest" element={null} />
+            <Route path="/map" element={null} />
           </Routes>
         </div>
         <Taskbar openWindows={openWindows} setActiveWindow={setActiveWindow} openWindow={openWindow} />

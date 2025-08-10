@@ -255,6 +255,29 @@ function Taskbar({ openWindows, setActiveWindow, openWindow }) {
               >
                   🚀 Astroidz Network Defense System v2.1
               </div>
+              <div
+                style={hoveredItem === 'speedtest' ? {...startMenuItemStyle, ...startMenuItemHoverStyle} : startMenuItemStyle}
+                onMouseEnter={() => setHoveredItem('speedtest')}
+                onMouseLeave={() => setHoveredItem(null)}
+                onClick={() => {
+                  openWindow('speedtest', 'speedtest');
+                  setIsStartOpen(false);
+                }}
+              >
+                  🌐 Internet Speed Test
+              </div>
+              <div
+                style={hoveredItem === 'map' ? {...startMenuItemStyle, ...startMenuItemHoverStyle} : startMenuItemStyle}
+                onMouseEnter={() => setHoveredItem('map')}
+                onMouseLeave={() => setHoveredItem(null)}
+                onClick={() => {
+                  openWindow('map', 'Map');
+                  setIsStartOpen(false);
+                }}
+              >
+                  🌍 Map
+              </div>
+              
               <hr style={{ border: 'none', height: '1px', background: '#808080', margin: '2px 0' }} />
               <div
                 style={hoveredItem === 'shutdown' ? {...startMenuItemStyle, ...startMenuItemHoverStyle} : startMenuItemStyle}
