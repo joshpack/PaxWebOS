@@ -9,11 +9,11 @@ function Astroidz() {
 
   // High scores "database"
   const [highScores, setHighScores] = useState([
-    { name: "ADMIN", score: 15420, timestamp: "2024-12-15 09:23:41" },
-    { name: "SYS_USER", score: 12800, timestamp: "2024-12-14 16:45:22" },
-    { name: "GUEST_007", score: 9650, timestamp: "2024-12-14 14:12:03" },
-    { name: "NETWORK_OPS", score: 7330, timestamp: "2024-12-13 11:08:55" },
-    { name: "VISITOR_42", score: 6120, timestamp: "2024-12-13 08:34:17" }
+    { name: "ADMIN", score: 15430, timestamp: "2024-12-15 09:23:41" },
+    { name: "SYS_USER", score: 12200, timestamp: "2024-12-14 16:45:22" },
+    { name: "GUEST_007", score: 9050, timestamp: "2024-12-14 14:12:03" },
+    { name: "NETWORK_OPS", score: 7630, timestamp: "2024-12-13 11:08:55" },
+    { name: "VISITOR_42", score: 6920, timestamp: "2024-12-13 08:34:17" }
   ]);
 
   const [gameState, setGameState] = useState({

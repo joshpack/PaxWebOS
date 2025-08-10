@@ -302,6 +302,9 @@ function Taskbar({ openWindows, setActiveWindow, openWindow }) {
               >
                 Yes
               </button>
+              <button onClick={() => openWindow('speedtest', 'Internet Speed Test')}>
+          Internet Speed Test
+        </button>
               <button
                 style={modalButtonStyle}
                 onClick={cancelShutdown}

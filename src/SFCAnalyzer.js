@@ -28,9 +28,13 @@ function SFCAnalyzer() {
   };
 
   const renderTabContent = () => {
-    const renderWithLineNumbers = (items) => {
+    const renderWithLineNumbers = (items, isFullLog = false) => {
+      const containerStyle = isFullLog
+        ? { ...logContainerStyle, height: '250px', overflowY: 'scroll' } // Fixed height for Full Log
+        : logContainerStyle;
+
       return (
-        <div style={logContainerStyle}>
+        <div style={containerStyle}>
           <div style={lineNumberStyle}>
             {items.map((item, index) => (
               <div key={index} style={lineNumberCellStyle}>
@@ -52,7 +56,7 @@ function SFCAnalyzer() {
     switch (activeTab) {
       case 'full':
         return fullLog ? (
-          renderWithLineNumbers(fullLog.split('\n').map((line, index) => ({ line, lineNumber: index + 1 })))
+          renderWithLineNumbers(fullLog.split('\n').map((line, index) => ({ line, lineNumber: index + 1 })), true)
         ) : (
           <p style={{ padding: '10px', fontFamily: 'MS Sans Serif, sans-serif', fontSize: '11px' }}>
             No file uploaded.
@@ -89,11 +93,11 @@ function SFCAnalyzer() {
 
   const logContainerStyle = {
     display: 'flex',
-    maxHeight: 'calc(100% - 80px)',
+    maxHeight: 'calc(100% - 100px)', // Adjusted for smaller window and UI elements
     overflowY: 'auto',
     width: '100%',
     border: '2px inset #c0c0c0',
-    background: '#fff'
+    background: '#fff',
   };
 
   const lineNumberStyle = {
@@ -132,7 +136,7 @@ function SFCAnalyzer() {
     display: 'flex',
     gap: '2px',
     marginBottom: '8px',
-    padding: '4px'
+    padding: '4px',
   };
 
   const buttonStyle = (isActive) => ({
@@ -142,24 +146,26 @@ function SFCAnalyzer() {
     background: '#c0c0c0',
     color: '#000',
     fontFamily: 'MS Sans Serif, sans-serif',
-    fontSize: '11px'
+    fontSize: '11px',
   });
 
   const fileInputStyle = {
     margin: '4px',
     padding: '2px',
     fontFamily: 'MS Sans Serif, sans-serif',
-    fontSize: '11px'
+    fontSize: '11px',
   };
 
   return (
-    <div style={{ 
-      height: '100%', 
-      display: 'flex', 
-      flexDirection: 'column', 
-      fontFamily: 'MS Sans Serif, sans-serif',
-      background: '#c0c0c0'
-    }}>
+    <div
+      style={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        fontFamily: 'MS Sans Serif, sans-serif',
+        background: '#c0c0c0',
+      }}
+    >
       <div style={{ padding: '4px', borderBottom: '1px solid #808080' }}>
         <h1 style={{ fontSize: '12px', margin: '4px 0', color: '#000080', fontWeight: 'bold' }}>
           System File Checker Analyzer v1.0
@@ -171,42 +177,42 @@ function SFCAnalyzer() {
           style={fileInputStyle}
         />
       </div>
-      
+
       <div style={tabStyle}>
         <button
           style={buttonStyle(activeTab === 'full')}
           onClick={() => setActiveTab('full')}
-          onMouseDown={(e) => e.target.style.border = '2px inset #c0c0c0'}
-          onMouseUp={(e) => e.target.style.border = activeTab === 'full' ? '2px inset #c0c0c0' : '2px outset #c0c0c0'}
+          onMouseDown={(e) => (e.target.style.border = '2px inset #c0c0c0')}
+          onMouseUp={(e) => (e.target.style.border = activeTab === 'full' ? '2px inset #c0c0c0' : '2px outset #c0c0c0')}
         >
           Full Log
         </button>
         <button
           style={buttonStyle(activeTab === 'cannotRepair')}
           onClick={() => setActiveTab('cannotRepair')}
-          onMouseDown={(e) => e.target.style.border = '2px inset #c0c0c0'}
-          onMouseUp={(e) => e.target.style.border = activeTab === 'cannotRepair' ? '2px inset #c0c0c0' : '2px outset #c0c0c0'}
+          onMouseDown={(e) => (e.target.style.border = '2px inset #c0c0c0')}
+          onMouseUp={(e) => (e.target.style.border = activeTab === 'cannotRepair' ? '2px inset #c0c0c0' : '2px outset #c0c0c0')}
         >
           Cannot Repair
         </button>
         <button
           style={buttonStyle(activeTab === 'repaired')}
           onClick={() => setActiveTab('repaired')}
-          onMouseDown={(e) => e.target.style.border = '2px inset #c0c0c0'}
-          onMouseUp={(e) => e.target.style.border = activeTab === 'repaired' ? '2px inset #c0c0c0' : '2px outset #c0c0c0'}
+          onMouseDown={(e) => (e.target.style.border = '2px inset #c0c0c0')}
+          onMouseUp={(e) => (e.target.style.border = activeTab === 'repaired' ? '2px inset #c0c0c0' : '2px outset #c0c0c0')}
         >
           Repaired
         </button>
         <button
           style={buttonStyle(activeTab === 'repairingCorrupted')}
           onClick={() => setActiveTab('repairingCorrupted')}
-          onMouseDown={(e) => e.target.style.border = '2px inset #c0c0c0'}
-          onMouseUp={(e) => e.target.style.border = activeTab === 'repairingCorrupted' ? '2px inset #c0c0c0' : '2px outset #c0c0c0'}
+          onMouseDown={(e) => (e.target.style.border = '2px inset #c0c0c0')}
+          onMouseUp={(e) => (e.target.style.border = activeTab === 'repairingCorrupted' ? '2px inset #c0c0c0' : '2px outset #c0c0c0')}
         >
           Repairing Corrupted
         </button>
       </div>
-      
+
       <div style={{ flex: 1, overflow: 'hidden', padding: '4px' }}>
         {renderTabContent()}
       </div>
